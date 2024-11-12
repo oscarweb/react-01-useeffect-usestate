@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 
 // interfaces
 interface Flags {
@@ -149,13 +149,13 @@ const Countries = () => {
         handleReloadAsync();
         setTotalPages(1);
         setPage(1);
-    }, [endpoint])
+    }, [])
 
     // console.log("countriesList: ", countriesList)
     // console.log("load: ",load)
 
     // tabs
-    const handleChangeTab = (e: any, continente: string) => {
+    const handleChangeTab = (e: MouseEvent<HTMLAnchorElement, MouseEvent>, continente: string) => {
         // e type ¿?
         e.preventDefault();
 
@@ -316,7 +316,7 @@ const Countries = () => {
             </div>
 
             {/** error conex */}
-            {requestError ??
+            {requestError &&
                 <div className="mt-2 alert alert-warning">
                     Hubo un error en la conexión     
                 </div>
@@ -399,12 +399,10 @@ const Countries = () => {
                         </tbody>
                     </table>
 
-                    { page < totalPages ?
+                    { (page < totalPages && countriesList.length >= 10) &&
                         <button className="btn w-100 btn-secondary" onClick={ handleNextPage } type="button">
                             Más resultados
                         </button>
-                        :
-                        ""
                     }                 
                 </div>
             }

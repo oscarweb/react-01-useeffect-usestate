@@ -91,6 +91,7 @@ const Countries = () => {
         endpoint: endpointAmerica,
         endpointError: false,
         endpointLoad: true,
+        data: [],
         page: 1,
         totalPage: 1,
         sortAsc: true,
@@ -99,14 +100,15 @@ const Countries = () => {
 
     const [countries, setCountries] = useState(initialCountries);
 
-
     // set load = false
     useEffect(() => {
-        if(countries.length > 0){
-            let new = countries;
-            new.endpointLoad = false;
-
-            setCountries(new)
+        if(countries.data.length > 0){
+            setCountries((old) => {
+                return {
+                    ...old,
+                    page: 2
+                }
+            })
         }
     }, [countries])
 
