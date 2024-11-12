@@ -1,5 +1,3 @@
-//import './App.css'
-
 import { useEffect, useState } from 'react'
 
 import Menu from './components/Menu'
@@ -12,9 +10,9 @@ function App() {
 
   const propsMenu = {page, setPage}
 
-  // useEffect(() => {
-  //   console.log('page: ', page)
-  // }, [page])
+  useEffect(() => {
+    console.log('page: ', page)
+  }, [page])
 
   return (
     <div className="container">
