@@ -39,7 +39,7 @@ const Counter = ({initialNumber}: {initialNumber: number}) => {
 
     return (
         <>
-            <h1>contador + alert</h1>
+            <h4 className="text-secondary">Contador</h4>
             <div className="input-group mb-3">
                 <button onClick={() => handleDecrement()} className="btn btn-outline-secondary" type="button">-</button>
                 <button onClick={() => handleIncrement()} className="btn btn-outline-secondary" type="button">+</button>

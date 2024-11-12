@@ -270,7 +270,7 @@ const Countries = () => {
 
     return (
         <>
-            <h1>Countries</h1>
+            <h4 className="text-secondary">Countries</h4>
 
             {/** tabs */}
             <ul className="nav nav-tabs">

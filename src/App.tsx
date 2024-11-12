@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import Menu from './components/Menu'
 import NavBar from './components/NavBar'
 import Counter from './pages/Counter'
-import Countries from './Countries'
+import Countries from './pages/Countries'
 
 function App() {
   const [page, setPage] = useState('counter')
