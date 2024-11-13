@@ -17,8 +17,8 @@ const CountriesTable = (props: {data: Country[], asc: boolean, setAsc: Dispatch<
                 <thead className="table-light">
                     <tr>
                         <th scope="col">Flag</th>
-                        <th scope="col">
-                            <span role="button" onClick={() => setAsc(!asc)}>
+                        <th scope="col" role="button" onClick={() => setAsc(!asc)}>
+                            <span>
                                 Name 
                             </span>                         
                         </th>
