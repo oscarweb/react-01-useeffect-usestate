@@ -24,6 +24,8 @@ const Counter = ({initialNumber}: {initialNumber: number}) => {
     const [max, setMax] = useState(isMax(initialNumber));
 
     useEffect(() => {
+        console.log('useEffect component counter')
+
         //(number == 0 || isMax(number))? setCss('d-block') : setCss('d-none')
         if(number == 0 || isMax(number)){
             setCss('d-block')

@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     console.log('page: ', page)
-  }, [page])
+  }, [])
 
   return (
     <div className="container">

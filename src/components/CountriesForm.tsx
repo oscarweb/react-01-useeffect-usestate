@@ -1,11 +1,21 @@
-const CountriesForm = (props) => {
+import { Dispatch } from "react";
+
+interface Props {
+    search: string
+    setSearch: Dispatch<React.SetStateAction<string>>
+    allLanguages: string[]
+    setLanguage: Dispatch<React.SetStateAction<string>>
+    reload: () => Promise<void>
+}
+
+const CountriesForm = (props: Props) => {
     const {search, setSearch, reload, allLanguages, setLanguage} = props;
 
-    const handleInputSearch = (e) => {
-        setSearch(e.target.value)
+    const handleInputSearch = (str: string) => {
+        setSearch(str)
     }
 
-    const handleSetLanguage = (val: string | null) => {
+    const handleSetLanguage = (val: string) => {
         setLanguage(val)        
     }
 
@@ -13,12 +23,11 @@ const CountriesForm = (props) => {
         <div className="mt-3 row justify-content-between align-items-center">
             <div className="col">
                 <div className="input-group">                    
-                    <input onChange={ handleInputSearch } type="text" className="form-control" placeholder="Search..." value={search}/>
+                    <input onChange={ (e) => handleInputSearch(e.target.value) } type="text" className="form-control" placeholder="Search..." value={search}/>
 
                     <select onChange={ (e) => { handleSetLanguage(e.target.value) } } className="form-select" defaultValue="0">
                         <option value="0">All Languages</option>
-                        {(allLanguages.length > 0) &&
-                            allLanguages.map((option, index) => (
+                        {allLanguages?.map((option, index) => (
                                 <option value={option} key={index}>{option}</option>
                             ))
                         }

@@ -1,12 +1,12 @@
 // interfaces
 interface Endpoints {
-    america: string,
-    europa: string
+    america: string
+    europe: string
 }
 
 interface Flags {
-    png: string,
-    svg: string,
+    png: string
+    svg: string
     alt: string
 }
 
@@ -23,10 +23,14 @@ interface Map {
 interface Country {
     flags: Flags
     name: Name
-    languages: []
+    languages: Language
     capital: []
     maps: Map
     population: number
+}
+
+interface Language {
+    [key: string]: string
 }
 
 export type{

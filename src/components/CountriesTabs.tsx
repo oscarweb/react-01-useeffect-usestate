@@ -1,6 +1,6 @@
-import { MouseEvent } from "react";
+import { Dispatch, MouseEvent } from "react";
 
-const CountriesTabs = ({tab, setTab}) => {
+const CountriesTabs = ({tab, setTab}: {tab: string, setTab: Dispatch<React.SetStateAction<string>>}) => {
 
     const handleChangeTab = (e: MouseEvent, name: string) => {
         e.preventDefault();

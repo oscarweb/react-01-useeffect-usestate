@@ -1,6 +1,8 @@
-const CountriesPaginate = () => {
+import { Dispatch } from "react";
+
+const CountriesPaginate = ({setPage, page}: {setPage: Dispatch<React.SetStateAction<number>>, page: number}) => {
     return (
-        <button className="btn w-100 btn-outline-secondary" type="button">
+        <button onClick={ () => setPage(page + 1) } className="btn w-100 btn-outline-secondary" type="button">
             Más resultados
         </button>
     )

@@ -1,7 +1,15 @@
+import { Dispatch } from "react";
 import type { Country } from "../interfaces/all";
 
-const CountriesTable = (props: {data: []}) => {
-    const {data}: {data: Country[]} = props;
+const CountriesTable = (props: {data: Country[], asc: boolean, setAsc: Dispatch<React.SetStateAction<boolean>>}) => {
+    const {data, asc, setAsc} = props;
+
+    const getLanguages = (country: Country) => {
+        if(country){
+            return Object.values(country.languages).join(', ')
+        }
+        return null
+    }
 
     return (
         <div className="table-responsive">
@@ -10,7 +18,7 @@ const CountriesTable = (props: {data: []}) => {
                     <tr>
                         <th scope="col">Flag</th>
                         <th scope="col">
-                            <span role="button">
+                            <span role="button" onClick={() => setAsc(!asc)}>
                                 Name 
                             </span>                         
                         </th>
@@ -27,7 +35,7 @@ const CountriesTable = (props: {data: []}) => {
                                 <tr key={index}>
                                     <th><img width="16" src={country?.flags?.png}/></th>
                                     <td>{country?.name?.official}</td>
-                                    <td>country?.languages</td>
+                                    <td>{getLanguages(country)}</td>
                                     <td>{country?.capital.join(', ')}</td>
                                     <td>
                                         <a href={country?.maps?.googleMaps} target="_blank">

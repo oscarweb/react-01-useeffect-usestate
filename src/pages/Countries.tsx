@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import CountriesTabs from "../components/CountriesTabs"
 import CountriesForm from "../components/CountriesForm";
@@ -7,7 +7,7 @@ import CountriesTable from "../components/CountriesTable";
 import CountriesPaginate from "../components/CountriesPaginate";
 import Loading from "../components/Loading";
 
-import type { Country } from "../interfaces/all";
+import type { Endpoints, Country } from "../interfaces/all";
 
 const Countries = () => {
     const endpoints: Endpoints = {
@@ -20,21 +20,27 @@ const Countries = () => {
     const [load, setLoad] = useState(false)
     const [endpoint, setEndpoint] = useState(endpoints.america)
     const [endpointError, setEndpointError] = useState(false)
-    const [data, setData] = useState([])
-    const [filterData, setFilterData] = useState([])
+    const [data, setData] = useState<Country[]>([])
+        // cantidad de páginas
+        const [totalPages, setTotalPages] = useState(1);
+        // página actual
+        const [page, setPage] = useState(1);
+    const [filterData, setFilterData] = useState<Country[]>([])
     const [search, setSearch] = useState('')
-    const [allLanguages, setAllLanguages] = useState([]);
-    const [language, setLanguage] = useState(0);
+    const [allLanguages, setAllLanguages] = useState<string[]>([]);
+    const [language, setLanguage] = useState('0');
+
+    const [asc, setAsc] = useState(true)
 
     // tabs
     useEffect(() => {
         console.log('tab: ', tab)
         setSearch('')
-        setFilterData([])
-        setLanguage(0)
+        //setFilterData([])
+        setLanguage('0')
 
         if(tab in endpoints){
-            setEndpoint(endpoints[tab])
+            setEndpoint(endpoints[tab as keyof Endpoints])
         }
     }, [tab])
 
@@ -46,64 +52,42 @@ const Countries = () => {
 
     // data
     useEffect(() => {
-        if(data.length > 0){
-            setFilterData(data)
-            setAllLanguages(getAllLanguages(data))
-        }
+        //setFilterData(data)
+        setAllLanguages(getAllLanguages())
+        setTotalPages(Math.ceil(data.length / 10));
+        setPage(1);
     }, [data])
 
     // filterData
-    useEffect(() => {
-        console.log('filterData', filterData)
-    }, [filterData])
+    // useEffect(() => {
+    //     console.log('filterData', filterData)
+    // }, [filterData])
 
     // input search
-    useEffect(() => {
-        if(search.length > 0){
-            const filter = data.filter(filterBySearch);
+    // useEffect(() => {
+    //     if(search.length > 0){
+    //         const filter = data.filter(filterBySearch);
             
-            setFilterData(filter)
-        }
-    }, [search, data])
+    //         setFilterData(filter)
+    //     }
+    // }, [search, data])
 
     // all languages
     useEffect(() => {
         console.log('allLanguage: ', allLanguages)
     }, [allLanguages])
 
-    useEffect(() => {
-        console.log('language: ', language)
-
-        if(language != 0){
-            let filter: Country[] = [];
-
-            if(search.length > 0){
-                filter = data.filter(filterBySearch)
-            }
-
-            const filterByLanguages: Country[] = []
-
-            for(const item of filter){
-                for(const [k, v] of Object.entries(item.languages)){
-                    if(v == language){
-                        filterByLanguages.push(item)
-                    }
-                }
-            }
-
-            setFilterData(filterByLanguages)
-        }
-
-    }, [language, data])
 
     // props tabs
-    const propsTabs = {tab, setTab}
+    const propsTabs: {tab: string, setTab: Dispatch<SetStateAction<string>>} = {tab, setTab}
 
     // requests
     const handleRequest = async () => {
         setEndpointError(false)
         setLoad(true)
-
+        setLanguage("0")
+        setSearch("")
+        
         try {
             const response = await fetch(endpoint);
     
@@ -123,39 +107,86 @@ const Countries = () => {
     }
 
     // filter input search
-    const filterBySearch = (item: Country) => {
-        return item?.name?.official.toLowerCase().indexOf(search) != -1
-    }
+    // const filterBySearch = (item: Country) => {
+    //     return item?.name?.official.toLowerCase().indexOf(search) != -1
+    // }
 
     // get all languages
-    const getAllLanguages = (countries: Country[]) => {
-        const languages: string[] = [];
-        for(const country of countries){
-            const l = getLanguages(country.languages, ',')
-            if(l.indexOf(',') > 0){
-                for(const item of l.split(',')){
-                    languages.push(item);
-                }
-            }
-            else{
-                languages.push(l);
-            }
-        }
+    const getAllLanguages = () => {
+
+        return [
+            ...new Set(
+                data.map((country: Country) => {
+                    return Object.values(country.languages)
+                }).flat()
+            )
+        ]
+
+        // const languages: string[] = [];
+        // for(const country of countries){
+        //     const l = getLanguages(country.languages, ',')
+        //     if(l.indexOf(',') > 0){
+        //         for(const item of l.split(',')){
+        //             languages.push(item);
+        //         }
+        //     }
+        //     else{
+        //         languages.push(l);
+        //     }
+        // }
         
-        return languages.filter((val, index) => languages.indexOf(val) === index)
+        // return languages.filter((val, index) => languages.indexOf(val) === index)
     }
 
     // extract languages
-    const getLanguages = (languages: object, prefix: string) => {
-        if(typeof prefix === 'undefined'){
-            prefix = ', '
-        }
-        const r = [];
-        for(const val of  Object.values(languages)){
-            r.push(val);
-        }
-        return r.join(prefix)
+    // const getLanguages = (languages: object, prefix: string) => {
+    //     if(typeof prefix === 'undefined'){
+    //         prefix = ', '
+    //     }
+    //     const r = [];
+    //     for(const val of  Object.values(languages)){
+    //         r.push(val);
+    //     }
+    //     return r.join(prefix)
+    // }
+
+    // getData + filters
+    const getDataFilter = () => {
+        return data
+            // by name
+            .filter((country: Country) => {
+                return country.name.official.toLowerCase().indexOf(search.toLowerCase()) !== -1
+            })
+            // by language
+            .filter((country: Country) => {
+                return language == "0" || Object.values(country.languages).includes(language)
+            })
+            // by asc/desc
+            .sort((a, b) => {
+                if(asc){
+                    return a.name.official.localeCompare(b.name.official);
+                }
+                else{
+                    return b.name.official.localeCompare(a.name.official);
+                }
+            })
     }
+
+    const paginate = (data: Country[]) => {
+        return data.slice(
+            0,
+            page * 10
+        )
+    }
+
+    // useEffect(() => {
+    //     console.log('totalPages: ', totalPages)
+    // }, [data])
+    
+    // useEffect(() => {
+    //     console.log('page: ', page)
+    //     console.log('[page] totalPages: ', totalPages)
+    // }, [page])
 
     return (
         <>
@@ -176,7 +207,7 @@ const Countries = () => {
                     />
         
                     <div className="mt-3">
-                        {(!endpointError && filterData.length == 0 && search.length > 0) &&
+                        {(!endpointError && getDataFilter().length == 0 && search.length > 0) &&
                             <Alert type="warning" message="No hay coincidencias."/>
                         }                        
 
@@ -184,12 +215,12 @@ const Countries = () => {
                             <Alert type="danger" message="Hubo un problema al solicitar datos." />
                         }                        
 
-                        {(!endpointError || filterData.length > 0) &&
-                            <CountriesTable data={filterData}/>
+                        {(!endpointError && paginate(getDataFilter()).length > 0) &&
+                            <CountriesTable data={paginate(getDataFilter())} asc={asc} setAsc={setAsc}/>
                         }
                         
-                        {(!endpointError || filterData.length >= 10 ) &&
-                            <CountriesPaginate />
+                        {(!endpointError && (paginate(getDataFilter()).length >= 10 && page < totalPages )) &&
+                            <CountriesPaginate setPage={setPage} page={page}/>
                         }
                     </div>    
                 </>
